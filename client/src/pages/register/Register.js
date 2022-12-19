@@ -1,7 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Container, Typography, Button, Box, TextField, InputAdornment } from '@mui/material'
-import Alert from '../../components/Alert'
-import TextInput from '../../components/TextInput'
+import { Alert, TextInput } from '../../components'
 import loginImg from '../../assets/images/login.svg'
 import registerImg from '../../assets/images/register.svg'
 import LoginIcon from '@mui/icons-material/Login';
@@ -10,6 +9,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import './register.css'
 import { useAppContext } from '../../context/appContext'
+import { useNavigate } from 'react-router-dom';
 
 const initialState = {
   name: '',
@@ -19,9 +19,18 @@ const initialState = {
 }
 
 const Register = () => {
+  const navigate = useNavigate()
   const [values, setValues] = useState(initialState)
   const [viewer, setViewer] = useState(false);
-  const { isLoading, showAlert, displayAlert } = useAppContext()
+  const { 
+    user, 
+    isLoading, 
+    showAlert, 
+    displayAlert, 
+    registerUser, 
+    loginUser,
+    setupUser
+  } = useAppContext()
   const handleVisibility = () => {
     setViewer((prev) => !prev);
   };
@@ -43,16 +52,37 @@ const Register = () => {
   const onSubmit = (e) => {
     e.preventDefault()
     const { name, email, password, isMember } = values
-    console.log('Name: ', name)
-    console.log('Email: ', email )
-    console.log('Password: ', password)
+    // console.log('Name: ', name)
+    // console.log('Email: ', email )
+    // console.log('Password: ', password)
     if (!email || !password || (!isMember && !name)) {
       displayAlert()
       return
     }
-    console.log(values)
+    
+    const currentUser = { name, email, password }
+        if (isMember) {
+            setupUser({
+              currentUser, 
+              endPoint: 'login', 
+              alertText: 'Login Successful!'
+            })
+        } else {
+          setupUser({
+            currentUser, 
+            endPoint: 'register', 
+            alertText: 'User Created Successfully!'
+          })
+        }
   }
 
+  useEffect(() => {
+    if (user) {
+        setTimeout(() => {
+            navigate('/')
+        }, 3000)
+    }
+  }, [user, navigate])
 
 
   return (
@@ -134,7 +164,8 @@ const Register = () => {
             endIcon={values.isMember ? <LoginIcon/> : <PersonAddAlt1Icon />} 
             fullWidth
             sx={{mt:2}}
-            type='submit' 
+            type='submit'
+            disabled={isLoading} 
           >{values.isMember ? 'Login' : 'Register'}</Button>
 
           <div className='login-bottom-msg'>

@@ -9,7 +9,7 @@ const Landing = () => {
     <main className='main-landing'>
         <nav className='nav-landing'>
             <img src={logo} alt='app-logo' className='logo'/>
-            <span><Typography variant="h4">UP'N DOWN</Typography></span>
+            {/* <span><Typography variant="h4">UP'N DOWN</Typography></span> */}
         </nav>
         <div className='landing'>
             <div className='hero-text'>

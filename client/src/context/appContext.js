@@ -173,7 +173,7 @@ const AppProvider = ({ children }) => {
     const createActivity = async () => {
       dispatch({ type: CREATE_ACTIVITY_BEGIN });
       try {
-        const { Activityname, ActivityType, Description, Date, Duration } = state;
+        //const { Activityname, ActivityType, Description, Date, Duration } = state;
     
         // await authFetch.post('/activities', {
         //   Activityname,                       //ส่งค่าที่ create ไป
