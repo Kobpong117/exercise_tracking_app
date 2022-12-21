@@ -14,6 +14,9 @@ import {
     GET_ACTIVITIES_BEGIN,
     GET_ACTIVITIES_SUCCESS,
     SET_EDIT_ACTIVITY,
+    DELETE_ACTIVITY_BEGIN,
+    DELETE_ACTIVITY_SUCCESS,
+    DELETE_ACTIVITY_ERROR
 
 } from "./action"
 
@@ -209,6 +212,9 @@ const reducer = (state, action) => {
         };
       }
 
+      if (action.type === DELETE_ACTIVITY_BEGIN) {
+        return { ...state, isLoading: true };
+      }
 
     throw new Error(`no such action: ${action.type}`)
 }

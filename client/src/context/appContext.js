@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from 'react'
+import React, { useReducer, useContext, useEffect } from 'react'
 import reducer from './reducer'
 import axios from 'axios';
 import { 
@@ -20,9 +20,14 @@ import {
     CREATE_ACTIVITY_BEGIN,
     CREATE_ACTIVITY_SUCCESS,
     CREATE_ACTIVITY_ERROR,
+    DELETE_ACTIVITY_BEGIN,
     GET_ACTIVITIES_BEGIN,
     GET_ACTIVITIES_SUCCESS,
     SET_EDIT_ACTIVITY,
+    EDIT_ACTIVITY_BEGIN,
+    EDIT_ACTIVITY_SUCCESS,
+    EDIT_ACTIVITY_ERROR
+
 } from './action'
 
 const token = localStorage.getItem('token');
@@ -47,7 +52,7 @@ const initialState = {
     Description:'',
     Date: '',
     Duration: '',
-    activities: [],
+    activities: [], //รับเป็น array ปล่าวๆมา เพราะเดี๋ยวจะเอา ค่ามาใส่ แล้วเอาไป map ต่อ
     totalActivities: 0,
     numOfPages: 1,
     page: 1,
@@ -176,7 +181,7 @@ const AppProvider = ({ children }) => {
         //const { Activityname, ActivityType, Description, Date, Duration } = state;
     
         // await authFetch.post('/activities', {
-        //   Activityname,                       //ส่งค่าที่ create ไป
+        //   Activityname,                       //ส่งค่าที่จะ create ไปเก็บที่หลังบ้าน
         //   ActivityType,
         //   Description,
         //   Date,
@@ -198,7 +203,7 @@ const AppProvider = ({ children }) => {
     };
 
     // const getActivities = async () => {
-    //   //let url = `/activities`
+    //   let url = `/activities`
     
     //   dispatch({ type: GET_ACTIVITIES_BEGIN })
     //   try {
@@ -222,13 +227,44 @@ const AppProvider = ({ children }) => {
     const setEditActivity = (id) => {
       dispatch({ type: SET_EDIT_ACTIVITY, payload: { id } })
     }
-    const editActivity = () => {
-      console.log('edit Activity')
-    }
-    const deleteActivity = (id) =>{
-      console.log(`delete : ${id}`)
-    }
 
+    const editActivity = async () => {
+      dispatch({ type: EDIT_ACTIVITY_BEGIN });
+  
+      try {
+        const { Activityname, ActivityType, Description, Date, Duration } = state;
+        await authFetch.patch(`/activities/${state.editActivityId}`, {
+          Activityname,
+          ActivityType,
+          Description,
+          Date,
+          Duration,
+        });
+        dispatch({ type: EDIT_ACTIVITY_SUCCESS });
+        dispatch({ type: CLEAR_VALUES });
+      } catch (error) {
+        if (error.response.status === 401) return;
+        dispatch({
+          type: EDIT_ACTIVITY_ERROR,
+          payload: { msg: error.response.data.msg },
+        });
+      }
+      clearAlert();
+    };
+
+    const deleteActivity = async (activityId) => {
+  dispatch({ type: DELETE_ACTIVITY_BEGIN });
+  try {
+    await authFetch.delete(`/activities/${activityId}`);
+    getActivities();
+  } catch (error) {
+    logoutUser();
+  }
+};
+
+useEffect(() => {
+  getActivities()
+}, [])
 
 
 
@@ -243,7 +279,7 @@ const AppProvider = ({ children }) => {
         handleChange,
         clearValues,
         createActivity,
-        //getActivities,
+        getActivities,
         setEditActivity,
         editActivity,
         deleteActivity,

@@ -22,12 +22,12 @@ const AddActivity = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!Activityname || !ActivityType || !Duration || !Date ) { //เป็นการเช็ค error ในส่วนของ Frontend
+    if (!Activityname || !ActivityType || !Duration || !Date ) { //เป็นการเช็ค error ในส่วนของ Frontend ว่า user กรอกข้อมูลครบมั้ย
       displayAlert();
       return;
     }
     if (isEditing) {
-      // eventually editJob()
+      editActivity()
       return;
     }
     createActivity();

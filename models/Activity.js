@@ -19,14 +19,14 @@ const ActivitySchema = new mongoose.Schema(
       maxlength: 100
     },
     Duration: {
-      type: String,
+      type: Number,
       required: true,
     },
     Date: {
-        type: String,
+        type: Date,
         required: true,
       },
-    createdBy: {
+    createdBy: {                       //สร้างเอาไว้เพื่อรอรับค่าจากฝั่ง User ว่าใครเป็นคนสร้างจ็อบนี้อีกที
       type: mongoose.Types.ObjectId,   //อยากเห็นว่าหน้าตาเป็นไง
       ref: 'User',
       required: [true, 'Please provide user'],
